@@ -18,3 +18,10 @@ file) with an open-source [HDF5][hdf5] format that better withstands
 data governance needs as they relate to external validation and
 reproducibility that outlives the legacy software needed to operate this
 equipment.
+
+See a brief primer on [WITec formats](docs/witec_formats.md) for help in
+understanding the data formats saved by _ScanCtrlSpectroscopyPlus_. The
+analysis scripts work best on `.SPE` and `.WIP` files that have been
+converted to `.hdf5` files.
+
+[hdf5]: https://github.com/HDFGroup/hdf5
