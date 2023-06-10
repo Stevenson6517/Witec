@@ -1,0 +1,14 @@
+name: witec
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.10
+  - jupyterlab
+  - jupytext
+  - matplotlib=3.7.*
+  - numpy
+  - pandas
+  - pre-commit=3.*
+  - pyyaml
+  - scienceplots
