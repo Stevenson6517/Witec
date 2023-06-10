@@ -25,3 +25,22 @@ analysis scripts work best on `.SPE` and `.WIP` files that have been
 converted to `.hdf5` files.
 
 [hdf5]: https://github.com/HDFGroup/hdf5
+
+## Getting started
+
+After cloning this repository, create a `witec` virtual environment from the
+[environment.yaml](environment.yaml) file provided by this repository. Issue
+the following command from a terminal navigated to the root of this project.
+
+```python
+conda env create -f environment.yaml
+```
+
+> Expect this process to take several minutes
+
+Activate the environment before running any scripts:
+
+```python
+conda activate witec
+```
+
