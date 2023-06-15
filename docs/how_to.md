@@ -29,3 +29,9 @@
 
 - [KL 1500 LCD](manuals/Schott_KL1500LCD_Manual.pdf) (white light illumination)
 
+## How To 
+
+### General
+
+- [Properly name files](filenames.md)
+
