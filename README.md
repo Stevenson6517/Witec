@@ -44,6 +44,9 @@ Activate the environment before running any scripts:
 conda activate witec
 ```
 
+See the [How To Guide](docs/how_to.md) for instructions on how to use
+the instruments connected to the WITec AlphaSNOM in Stevenson 6517.
+
 ### Viewing Jupyter notebooks
 
 Jupyter notebooks are a useful way to explore data and develop code
