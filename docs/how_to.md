@@ -20,3 +20,8 @@
 - [VersArray System](manuals/Princeton-Instruments_VersArray-System_Manual.pdf) (800-1700 nm)
 - [WinSpec32](manuals/Princeton-Instruments_WinSpec32_UserManual2.6.pdf)
 
+### Coherent
+
+- [Verdi-V5 Preinstallation Manual](manuals/Verdi_V2-V5-V6_Preinstallation.pdf)
+- [Verdi-V8 Operation Manual](manuals/Verdi_V8-V10_Manual.pdf) (replacement manual for V5)
+
