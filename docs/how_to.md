@@ -20,6 +20,12 @@
 - [VersArray System](manuals/Princeton-Instruments_VersArray-System_Manual.pdf) (800-1700 nm)
 - [WinSpec32](manuals/Princeton-Instruments_WinSpec32_UserManual2.6.pdf)
 
+### PI Micos
+
+- [PI MikroMove](manuals/PI-micos_MikroMove_SM148E_UserManual.pdf)
+- [Venus-2 serial commands](manuals/PI-micos_Venus2_pollux_Shortform.pdf) (abbreviated)
+- [ES100 Elevation Stage](manuals/PI-micos_ES100_ElevationStage.pdf)
+
 ### Coherent
 
 - [Verdi-V5 Preinstallation Manual](manuals/Verdi_V2-V5-V6_Preinstallation.pdf)
