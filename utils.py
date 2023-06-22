@@ -44,27 +44,57 @@ def parse_fields(text):
     return fields
 
 
-def assign_datetime(string):
-    split = ((string.split(".")[0]).split("+"))[0]
-    digits = ["0"] * 14
-    n = 0
-    for i in [*split]:
-        if i.isdigit():
-            digits[n] = i
-            n = n + 1
+# https://stackoverflow.com/questions/9507648/datetime-from-string-in-python-best-guessing-string-format
+def assign_datetime(s_date):
+    # TODO: Move this list to an external file
+    date_patterns = [
+        # Y(ear) m(onth) d(ay)
+        "%Y%m%d",
+        "%Y-%m-%d",
+        # + H(our) M(inute)
+        "%Y%m%d-%H%M",
+        "%Y%m%d-%H-%M",
+        "%Y-%m-%dT%H%M",
+        "%Y-%m-%dT%H-%M",
+        "%Y-%m-%dT%H:%M",
+        "%Y-%m-%d-%H-%M",
+        # + H(our) M(inute) w/ timezones
+        "%Y%m%d-%H%M%z",
+        "%Y%m%d-%H-%M%z",
+        "%Y-%m-%dT%H%M%z",
+        "%Y-%m-%dT%H-%M%z",
+        "%Y-%m-%dT%H:%M%z",
+        "%Y-%m-%d-%H-%M%z",
+        # + S(econds)
+        "%Y%m%d-%H%M%S",
+        "%Y%m%d-%H-%M-%S",
+        "%Y-%m-%dT%H%M%S",
+        "%Y-%m-%dT%H:%M:%S",
+        "%Y-%m-%dT%H-%M-%S",
+        "%Y-%m-%d-%H-%M-%S",
+        "%Y-%m-%d-%H:%M:%S",
+        "%Y-%m-%d %H:%M:%S",
+        # + S(econds) w/ timezones
+        "%Y%m%d-%H%M%S%z",
+        "%Y%m%d-%H-%M-%S%z",
+        "%Y-%m-%dT%H%M%S%z",
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%dT%H-%M-%S%z",
+        "%Y-%m-%d-%H-%M-%S%z",
+        "%Y-%m-%d-%H:%M:%S%z",
+        "%Y-%m-%d %H:%M:%S%z",
+    ]
 
-    year = int("".join(digits[0:4]))
-    month = int("".join(digits[4:6]))
-    day = int("".join(digits[6:8]))
-    hour = int("".join(digits[8:10]))
-    minute = int("".join(digits[10:12]))
-    seconds = int("".join(digits[12:14]))
-
-    iso_8601_datetime_str = (
-        datetime(year, month, day, hour, minute, seconds).astimezone().isoformat()
-    )
-
-    return iso_8601_datetime_str
+    for pattern in date_patterns:
+        try:
+            date = datetime.strptime(s_date, pattern).replace(microsecond=0)
+            # If timezone is already present, don't overwrite it
+            if date.utcoffset():
+                return date.isoformat()
+            # Otherwise, assume local time zone
+            return date.astimezone().isoformat()
+        except ValueError:
+            pass
 
 
 # -
