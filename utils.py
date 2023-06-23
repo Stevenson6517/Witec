@@ -13,9 +13,9 @@
 # ---
 
 # +
-# #!/usr/bin/env python3
 from datetime import datetime
 import os
+import re
 
 # This definition will take the title of a WIP file and create a
 # dictionary with all of the fields and their paired values established
@@ -39,7 +39,7 @@ def parse_fields(text):
     fields["location"] = location
     fields["identifier"] = identifier
     fields["meas-type"] = meas_type
-    fields["source-settings"] = source_settings
+    fields["source-settings"] = assign_settings(source_settings)
     fields["datetime"] = assign_datetime(datestring)
     return fields
 
@@ -97,4 +97,60 @@ def assign_datetime(s_date):
             pass
 
 
-# -
+def assign_settings(source_settings):
+    settings = {}
+    for field in source_settings:
+        try:
+            value, unit = split_field_by_value(field)
+            if unit == "m":
+                settings["wavelength (m)"] = value
+            if unit == "W":
+                settings["excitation source"] = "laser"
+                settings["set power (W)"] = value
+            if unit == "s":
+                settings["exposure time (s)"] = value
+
+        except:
+            value, name = split_field_by_name(field)
+            if value == "obj":
+                settings["objective"] = name
+            if value == "f":
+                settings["filter"] = name
+            if value == "LED":
+                settings["excitation source"] = value
+                settings["LED details"] = name
+    return settings
+
+
+def split_field_by_value(string):
+    value, unit = re.findall(("(^\d*)(\D*$)"), string)[0]
+    return assign_value(value, unit)
+
+
+def split_field_by_name(string):
+    value_name = string.split("-")
+    value, name = value_name[0], value_name[1]
+    return value, name
+
+
+def assign_value(value, unit):
+    scale, unit_SI = parse_unit(unit)
+    return int(value) * scale, unit_SI
+
+
+def parse_unit(unit):
+    if len(unit) > 1:
+        if unit[0] == "m":
+            scale = 1e-3
+        if unit[0] in ["u", "µ"]:
+            scale = 1e-6
+        if unit[0] == "n":
+            scale = 1e-9
+        if unit[0] == "p":
+            scale = 1e-12
+    else:
+        scale = 1
+
+    unit_SI = unit[-1]
+
+    return scale, unit_SI
