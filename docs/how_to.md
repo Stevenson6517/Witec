@@ -23,7 +23,9 @@
 ### PI Micos
 
 - [PI MikroMove](manuals/PI-micos_MikroMove_SM148E_UserManual.pdf)
-- [Venus-2 serial commands](manuals/PI-micos_Venus2_pollux_Shortform.pdf) (abbreviated)
+- [Venus-2 serial commands](manuals/PI-micos_SMC-Pollux_Venus2_Longform_V2-3.pdf) (full)
+- [Venus-2 serial commands](manuals/PI-micos_SMC-Pollux_Venus2_Shortform_V12.pdf) (abbreviated)
+- [SMC Pollux Micro Controller](manuals/PI-micos_SMC-Pollux_Motion_Controllers.pdf)
 - [ES100 Elevation Stage](manuals/PI-micos_ES100_ElevationStage.pdf)
 
 ### Coherent
