@@ -17,6 +17,8 @@ from datetime import datetime
 import os
 import re
 
+import winspec
+
 # This definition will take the title of a WIP file and create a
 # dictionary with all of the fields and their paired values established
 # in the file name
@@ -179,7 +181,14 @@ def parse_wiptextfile(text):
     return wip_dict
 
 
+def metadata_from_spe(filename):
+    spe_dict = winspec.read_spe(filename)
+    del spe_dict["data"]
+    return spe_dict
+
+
 def assemble_metadata(basename, *yaml):
     metadata = {}
     metadata["WIP"] = metadata_from_wip(basename + ".WIP")
+    metadata["SPE"] = metadata_from_spe(basename + ".SPE")
     return metadata
