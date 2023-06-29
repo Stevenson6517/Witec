@@ -17,6 +17,8 @@ from datetime import datetime
 import os
 import re
 
+import yaml
+
 import winspec
 
 # This definition will take the title of a WIP file and create a
@@ -187,8 +189,17 @@ def metadata_from_spe(filename):
     return spe_dict
 
 
+def metadata_from_yaml(yaml_string):
+    with open(yaml_string, "r", encoding="utf-8") as stream:
+        yaml_text = yaml.safe_load(stream)
+    return yaml_text
+
+
 def assemble_metadata(basename, *yaml):
     metadata = {}
     metadata["WIP"] = metadata_from_wip(basename + ".WIP")
     metadata["SPE"] = metadata_from_spe(basename + ".SPE")
+    metadata["Experiment"] = parse_fields(basename)
+    for file in yaml:
+        metadata.update(metadata_from_yaml(file))
     return metadata
