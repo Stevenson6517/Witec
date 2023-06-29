@@ -154,3 +154,32 @@ def parse_unit(unit):
     unit_SI = unit[-1]
 
     return scale, unit_SI
+
+
+def metadata_from_wip(filename):
+    # Somehow we end up with a text file from the wip file.
+    # The text variable below was just a practice file for me to use
+    # and should be changed
+
+    # wip_text = extract_text(filename)
+    text = "hBN-10_loc-uppercenter_eye_exts-r_532nm_0800mW_f-ND10A_obj-50x_1000ms_2023-06-27_1.txt"
+    metadata_wip = parse_wiptextfile(text)
+    return metadata_wip
+
+
+def parse_wiptextfile(text):
+    with open(text, "r", encoding="latin-1") as f:
+        content = f.readlines()
+        wip_dict = {}
+        for i in content:
+            if re.findall("^.*:\t.*\n$", i) != []:
+                wip_dict[re.findall("^(.*):\t.*\n$", i)[0]] = re.findall(
+                    "^.*:\t(.*)\n$", i
+                )[0]
+    return wip_dict
+
+
+def assemble_metadata(basename, *yaml):
+    metadata = {}
+    metadata["WIP"] = metadata_from_wip(basename + ".WIP")
+    return metadata
