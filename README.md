@@ -65,3 +65,10 @@ notebooks][jupytext-paired-notebooks] for help.
 
 [jupytext]: https://jupytext.readthedocs.io/en/latest/
 [jupytext-paired-notebooks]: https://jupytext.readthedocs.io/en/latest/paired-notebooks.html
+
+## Contributing
+
+Notice any errors? Tell us about them.
+
+This lab is run by scientists, not software developers. Newcomers are welcome.
+Check out our [guidelines](CONTRIBUTING.md) on how you can help.
