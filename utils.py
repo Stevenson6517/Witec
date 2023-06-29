@@ -27,10 +27,9 @@ import winspec
 # It will print out these values as well
 
 
-def parse_fields(text):
-    # Sanitize input
-    text_name = os.path.basename(text)
-    slug, ext = os.path.splitext(text_name)
+def metadata_from_name(filename):
+    basename = os.path.basename(filename)
+    slug, ext = os.path.splitext(basename)
     fields_sep = slug.split("_")
     sample, location, identifier, meas_type = fields_sep[0:4]
     measurement_number = fields_sep[-1]
@@ -46,53 +45,17 @@ def parse_fields(text):
     fields["location"] = location
     fields["identifier"] = identifier
     fields["meas-type"] = meas_type
-    fields["source-settings"] = assign_settings(source_settings)
-    fields["datetime"] = assign_datetime(datestring)
+    fields["source-settings"] = _assign_settings(source_settings)
+    fields["datetime"] = _assign_datetime(datestring)
     fields["measurement number"] = measurement_number
     return fields
 
 
 # https://stackoverflow.com/questions/9507648/datetime-from-string-in-python-best-guessing-string-format
-def assign_datetime(s_date):
-    # TODO: Move this list to an external file
-    date_patterns = [
-        # Y(ear) m(onth) d(ay)
-        "%Y%m%d",
-        "%Y-%m-%d",
-        # + H(our) M(inute)
-        "%Y%m%d-%H%M",
-        "%Y%m%d-%H-%M",
-        "%Y-%m-%dT%H%M",
-        "%Y-%m-%dT%H-%M",
-        "%Y-%m-%dT%H:%M",
-        "%Y-%m-%d-%H-%M",
-        # + H(our) M(inute) w/ timezones
-        "%Y%m%d-%H%M%z",
-        "%Y%m%d-%H-%M%z",
-        "%Y-%m-%dT%H%M%z",
-        "%Y-%m-%dT%H-%M%z",
-        "%Y-%m-%dT%H:%M%z",
-        "%Y-%m-%d-%H-%M%z",
-        # + S(econds)
-        "%Y%m%d-%H%M%S",
-        "%Y%m%d-%H-%M-%S",
-        "%Y-%m-%dT%H%M%S",
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%dT%H-%M-%S",
-        "%Y-%m-%d-%H-%M-%S",
-        "%Y-%m-%d-%H:%M:%S",
-        "%Y-%m-%d %H:%M:%S",
-        # + S(econds) w/ timezones
-        "%Y%m%d-%H%M%S%z",
-        "%Y%m%d-%H-%M-%S%z",
-        "%Y-%m-%dT%H%M%S%z",
-        "%Y-%m-%dT%H:%M:%S%z",
-        "%Y-%m-%dT%H-%M-%S%z",
-        "%Y-%m-%d-%H-%M-%S%z",
-        "%Y-%m-%d-%H:%M:%S%z",
-        "%Y-%m-%d %H:%M:%S%z",
-    ]
-
+def _assign_datetime(s_date):
+    dates = "witec/conventions/dates.yaml"
+    with open(dates, "r", encoding="utf-8") as stream:
+        date_patterns = yaml.safe_load(stream)
     for pattern in date_patterns:
         try:
             date = datetime.strptime(s_date, pattern).replace(microsecond=0)
@@ -105,11 +68,11 @@ def assign_datetime(s_date):
             pass
 
 
-def assign_settings(source_settings):
+def _assign_settings(source_settings):
     settings = {}
     for field in source_settings:
         try:
-            value, unit = split_field_by_value(field)
+            value, unit = _split_field_by_value(field)
             if unit == "m":
                 settings["wavelength (m)"] = value
             if unit == "W":
@@ -119,7 +82,7 @@ def assign_settings(source_settings):
                 settings["exposure time (s)"] = value
 
         except:
-            value, name = split_field_by_name(field)
+            value, name = _split_field_by_name(field)
             if value == "obj":
                 settings["objective"] = name
             if value == "f":
@@ -130,23 +93,23 @@ def assign_settings(source_settings):
     return settings
 
 
-def split_field_by_value(string):
+def _split_field_by_value(string):
     value, unit = re.findall(("(^\d*)(\D*$)"), string)[0]
-    return assign_value(value, unit)
+    return _assign_value(value, unit)
 
 
-def split_field_by_name(string):
+def _split_field_by_name(string):
     value_name = string.split("-")
     value, name = value_name[0], value_name[1]
     return value, name
 
 
-def assign_value(value, unit):
-    scale, unit_SI = parse_unit(unit)
+def _assign_value(value, unit):
+    scale, unit_SI = _parse_unit(unit)
     return int(value) * scale, unit_SI
 
 
-def parse_unit(unit):
+def _parse_unit(unit):
     if len(unit) > 1:
         if unit[0] == "m":
             scale = 1e-3
@@ -165,18 +128,17 @@ def parse_unit(unit):
 
 
 def metadata_from_wip(filename):
-    # Somehow we end up with a text file from the wip file.
-    # The text variable below was just a practice file for me to use
-    # and should be changed
+    ##Somehow we end up with a text file from the wip file.
+    ##The text variable below was just a practice file for me to use and should be changed
 
     # wip_text = extract_text(filename)
-    text = "hBN-10_loc-uppercenter_eye_exts-r_532nm_0800mW_f-ND10A_obj-50x_1000ms_2023-06-27_1.txt"
-    metadata_wip = parse_wiptextfile(text)
+    wip_text = "hBN-10_loc-uppercenter_eye_exts-r_532nm_0800mW_f-ND10A_obj-50x_1000ms_2023-06-27_1.txt"
+    metadata_wip = _parse_wiptextfile(wip_text)
     return metadata_wip
 
 
-def parse_wiptextfile(text):
-    with open(text, "r", encoding="latin-1") as f:
+def _parse_wiptextfile(wip_text):
+    with open(wip_text, "r", encoding="latin-1") as f:
         content = f.readlines()
         wip_dict = {}
         for i in content:
@@ -188,22 +150,25 @@ def parse_wiptextfile(text):
 
 
 def metadata_from_spe(filename):
-    spe_dict = winspec.read_spe(filename)
-    del spe_dict["data"]
-    return spe_dict
+    metadata_spe = winspec.read_spe(filename)
+    del metadata_spe["data"]
+    return metadata_spe
 
 
 def metadata_from_yaml(yaml_string):
     with open(yaml_string, "r", encoding="utf-8") as stream:
-        yaml_text = yaml.safe_load(stream)
-    return yaml_text
+        metadata_yaml = yaml.safe_load(stream)
+    return metadata_yaml
 
 
 def assemble_metadata(basename, *yaml):
     metadata = {}
     metadata["WIP"] = metadata_from_wip(basename + ".WIP")
     metadata["SPE"] = metadata_from_spe(basename + ".SPE")
-    metadata["Experiment"] = parse_fields(basename)
+    metadata["Experiment"] = metadata_from_name(basename)
     for file in yaml:
         metadata.update(metadata_from_yaml(file))
     return metadata
+
+
+# +
