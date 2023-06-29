@@ -1,25 +1,10 @@
-# ---
-# jupyter:
-#   jupytext:
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.14.6
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
-
-# +
 from datetime import datetime
 import os
 import re
 
 import yaml
 
-import winspec
+import witec.winspec
 
 # This definition will take the title of a WIP file and create a
 # dictionary with all of the fields and their paired values established
@@ -150,7 +135,7 @@ def _parse_wiptextfile(wip_text):
 
 
 def metadata_from_spe(filename):
-    metadata_spe = winspec.read_spe(filename)
+    metadata_spe = witec.winspec.read_spe(filename)
     del metadata_spe["data"]
     return metadata_spe
 
