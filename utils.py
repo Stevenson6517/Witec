@@ -33,9 +33,12 @@ def parse_fields(text):
     slug, ext = os.path.splitext(text_name)
     fields_sep = slug.split("_")
     sample, location, identifier, meas_type = fields_sep[0:4]
-    datestring = fields_sep[-1]
+    measurement_number = fields_sep[-1]
+    datestring = fields_sep[-2]
     set_fields = set(fields_sep)
-    existing_fields = set([sample, location, identifier, meas_type, datestring])
+    existing_fields = set(
+        [sample, location, identifier, meas_type, datestring, measurement_number]
+    )
     source_settings = set_fields.difference(existing_fields)
     # Assign values to dictionary
     fields = {}
@@ -45,6 +48,7 @@ def parse_fields(text):
     fields["meas-type"] = meas_type
     fields["source-settings"] = assign_settings(source_settings)
     fields["datetime"] = assign_datetime(datestring)
+    fields["measurement number"] = measurement_number
     return fields
 
 
