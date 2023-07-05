@@ -78,11 +78,11 @@ Si-pillars_loc2B-2-7_nozzle_exts-r_405nm_obj50x_20230527-1712.WIP
 | `meas-type`  | afm-t                     | AFM in tapping mode                                 |
 | `source`     | 532nm                     | Verdi 532 nm (accompany w/ power settings)          |
 | `source`     | 405nm                     | 405 nm (no additional power settings needed)        |
-| `source`     | UVLED                     | LED lamp with peak emission in ultraviolet          |
+| `source`     | LED-UV                    | LED lamp with peak emission in ultraviolet          |
 | `set`-power  | 080mW                     | (pad w/ leading zeros)                              |
-| `NDfilter`   | ND10A                     | Name of neutral density filter before fiber         |
-| `NDfilter`   | ND0                       | Explicitly state that no ND filter is in place      |
-| `objective`  | obj50x                    | 50x objective                                       |
+| `NDfilter`   | f-ND10A                   | Name of neutral density filter before fiber         |
+| `NDfilter`   | f-ND0                     | Explicitly state that no ND filter is in place      |
+| `objective`  | obj-50x                   | 50x objective                                       |
 | `date-time`  | 2023-06-15-16-28          | June 15, 2023 at 4:28 PM local time                 |
 | `date-time`  | 20230615-1628             | June 15, 2023 at 4:28 PM local time                 |
 | `date-time`  | 2023‐06‐15T14:28:39−07:00 | 2023-06-15 at 21:28 UTC-7:00 (time zone)            |
