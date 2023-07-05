@@ -1,3 +1,27 @@
+"""This module provides utility functions for assembling metadata from a
+filename with coresponding WIP and SPE files.
+
+The main function, assemble_metadata, will extract and assemble all
+metadata from a similarly named SPE file and WIP file based on a
+user-supplied basename. Additional metadata can be included at runtime
+by supplying a yaml file with a dictionary of common settings.
+
+Use the tools in this file in other scripts in this project by importing
+this file and calling any necessary functions.
+
+>>> import witec.utils as utils
+
+>>> target = "path/to/file" # SPE file or WIP file
+>>> basename = os.path.splitext(target)[0] # path w/o extension
+>>> supplemental = [
+...         layout.yaml,
+...         authorship.yaml,
+...         sample.yaml,
+...         ]
+>>> extracted_dict = utils.assemble_metadata(basename, *supplemental)
+"""
+
+
 from datetime import datetime
 import os
 import re
@@ -6,13 +30,23 @@ import yaml
 
 import witec.winspec
 
-# This definition will take the title of a WIP file and create a
-# dictionary with all of the fields and their paired values established
-# in the file name
-# It will print out these values as well
-
 
 def metadata_from_name(filename):
+    """Parse metadata from a structured filename into a dictionary.
+
+    Parameters
+    ----------
+    filename : str
+        The path to a structured filename with the following keys:
+        "sample_location_identifier_meas-type{_settings}_datetime_meas-num"
+        Values in {} are optional and may contain multiple fields.
+        Directory structure, if present in the file name, is ignored.
+
+    Returns
+    -------
+    fields : dict
+        key: value pairs, where values are extracted from filename
+    """
     basename = os.path.basename(filename)
     slug, ext = os.path.splitext(basename)
     fields_sep = slug.split("_")
@@ -113,6 +147,18 @@ def _parse_unit(unit):
 
 
 def metadata_from_wip(filename):
+    """Extract metadata from a Witec Project file as a dictionary.
+
+    Parameters
+    ----------
+    filename : str
+        Path to a WitecProject file, with .WIP extension.
+
+    Returns
+    -------
+    metadata_wip : dict
+        Acqusition settings and user notes from a project.
+    """
     ##Somehow we end up with a text file from the wip file.
     ##The text variable below was just a practice file for me to use and should be changed
 
@@ -135,18 +181,59 @@ def _parse_wiptextfile(wip_text):
 
 
 def metadata_from_spe(filename):
+    """Extract all non-data values and settings from a winspec .SPE file.
+
+    Parameters
+    ----------
+    filename : str
+        Path to a winspec file, with .SPE extension.
+
+    Returns
+    -------
+    metadata_spe : dict
+        Acquisition and calibration settings.
+    """
     metadata_spe = witec.winspec.read_spe(filename)
     del metadata_spe["data"]
     return metadata_spe
 
 
 def metadata_from_yaml(yaml_string):
+    """Extract and categorize the data from a given yaml file into a dictionary"""
     with open(yaml_string, "r", encoding="utf-8") as stream:
         metadata_yaml = yaml.safe_load(stream)
     return metadata_yaml
 
 
 def assemble_metadata(basename, *yaml):
+    """Gather metadata from similarly named basename.SPE and basename.WIP files.
+
+    Parameters
+    ----------
+    basename : str
+        "Path/to/directory/structured_filename" (without extension)
+
+    yaml: str (optional)
+        Path to additonal yaml file(s) where other settings are stored.
+
+    Returns
+    -------
+    metadata : dict
+        Combined dictionary of settings from .WIP, .SPE, and yaml files
+
+    Assumptions
+    -----------
+    A .WIP and .SPE file exist in the same directory and with an
+    identical naming structure such that their full file paths differ
+    only by filetype extension.
+
+    Notes
+    -----
+    - Each additional (optional) argument after the required basename
+      argument is assumed to be a yaml dictionary, applied left-to-right.
+    - If the same metadata key is present in multiple yaml files, the value from
+      the last dictionary overwrites the original value.
+    """
     metadata = {}
     metadata["WIP"] = metadata_from_wip(basename + ".WIP")
     metadata["SPE"] = metadata_from_spe(basename + ".SPE")
