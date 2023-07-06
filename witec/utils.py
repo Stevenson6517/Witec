@@ -50,6 +50,7 @@ def metadata_from_name(filename):
     basename = os.path.basename(filename)
     slug, ext = os.path.splitext(basename)
     fields_sep = slug.split("_")
+    fields_sep = [field for field in fields_sep if field != ""]
     sample, location, identifier, meas_type = fields_sep[0:4]
     measurement_number = fields_sep[-1]
     datestring = fields_sep[-2]
@@ -101,14 +102,20 @@ def _assign_settings(source_settings):
                 settings["exposure time (s)"] = value
 
         except:
-            value, name = _split_field_by_name(field)
-            if value == "obj":
-                settings["objective"] = name
-            if value == "f":
-                settings["filter"] = name
-            if value == "LED":
-                settings["excitation source"] = value
-                settings["LED details"] = name
+            try:
+                value, name = _split_field_by_name(field)
+                if value == "obj":
+                    settings["objective"] = name
+                if value == "f":
+                    settings["filter"] = name
+                if value == "LED":
+                    settings["excitation source"] = value
+                    settings["LED details"] = name
+                else:
+                    settings[value] = name
+            except:
+                settings["other"] = field
+
     return settings
 
 
