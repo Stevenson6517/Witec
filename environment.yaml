@@ -10,5 +10,6 @@ dependencies:
   - numpy
   - pandas
   - pre-commit=3.*
+  - pytest
   - pyyaml
   - scienceplots
