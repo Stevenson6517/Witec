@@ -53,15 +53,15 @@ class Witec:
 
     Attributes
     ----------
-    magic : str
+    file_type : str
         A filetype identifier hidden in the first 8 bytes of the file.
-    dict : dict
+    contents : dict
         A nested data structure of the contents of a .WIP file
     """
 
     file: str
-    magic: str = field(init=False, repr=False)
-    dict: dict = field(init=False, repr=False)
+    file_type: str = field(init=False, repr=False)
+    contents: dict = field(init=False, repr=False)
 
     dtypes = {
         0: "s",  # char
@@ -81,14 +81,14 @@ class Witec:
         with open(self.file, "rb") as raw:
             b_string = raw.read()
             # First 8 bytes describe file type
-            self.magic = struct.unpack("<8s", b_string[:8])[0].decode()
+            self.file_type = struct.unpack("<8s", b_string[:8])[0].decode()
             # Remaining bytes follow predictable pattern
-            self.dict = self._extract_binary(b_string[8:])
+            self.contents = self._extract_binary(b_string[8:])
             # Apply fixes to fields with known errors
-            info = self.dict["WITec Project"]["Data"]["Data 1"]["TDStream"]
+            info = self.contents["WITec Project"]["Data"]["Data 1"]["TDStream"]
             info["StreamData"] = self._convert_information_tag(info["StreamData"])
             # Convert remaining strings in dictionary
-            map_nested_dicts_modify(self.dict, lambda v: v.decode("windows-1252"))
+            map_nested_dicts_modify(self.contents, lambda v: v.decode("windows-1252"))
 
     def _extract_binary(self, b_string):
         """Traverse through a byte string according to a fixed storage format."""
