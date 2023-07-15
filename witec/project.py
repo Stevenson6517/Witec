@@ -57,6 +57,19 @@ class Witec:
         A nested data structure of the contents of a .WIP file
     """
 
+    dtypes = {
+        0: "s",  # char
+        1: "I",  # uint32
+        2: "b",  # double (short)
+        3: "b",  # single (byte)
+        4: "q",  # int64 (quad = long long)
+        5: "b",  # int32 (long)
+        6: "H",  # uint16
+        7: "B",  # uint8
+        8: "?",  # logical
+        9: "s",  # char
+    }
+
     def __init__(self, file):
         with open(file, "rb") as raw:
             b_string = raw.read()
@@ -81,6 +94,9 @@ class Witec:
             # (1 x uint32) describes the data type at next pointer
             dtype = struct.unpack("<I", b_string[shift : (shift := shift + 4)])[0]
             log.debug("dtype: %s", dtype)
+            # Special case where dtype for uint16 is actually uint32
+            if dtype == 6 and (size % 4 == 0):
+                dtype = 1
             # (1 x uint64) points to data start byte (absolute from start of file)
             start = struct.unpack("<Q", b_string[shift : (shift := shift + 8)])[0]
             log.debug("start: %s", start)
@@ -91,34 +107,21 @@ class Witec:
             log.debug("size: %s", size)
             # Process data field according to type
             data_string = b_string[shift : (shift := shift + size)]
-            if dtype == 0:  # wit
-                string = struct.unpack(f"<{size}s", data_string)[0]
-                data = self._extract_binary(string)
-            elif dtype == 1:  # unused
-                pass
-            elif dtype == 2:  # double (short)
-                data = struct.unpack(f"<{size}b", data_string)
-            elif dtype == 3:  # single (byte)
-                data = struct.unpack(f"<{size}b", data_string)
-            elif dtype == 4:  # int64 (quad = long long)
-                data = struct.unpack(f"<{size}q", data_string)
-            elif dtype == 5:  # int32 (long)
-                data = struct.unpack(f"<{size}b", data_string)
-            elif dtype == 6 and (size % 4 == 0):  # uint32
-                data = struct.unpack(f"<{size}I", data_string)
-            elif dtype == 6:  # uint16
-                data = struct.unpack(f"<{size}H", data_string)
-            elif dtype == 7:  # uint8
-                data = struct.unpack(f"<{size}B", data_string)
-            elif dtype == 8:  # logical
-                data = struct.unpack(f"<{size}?", data_string)
-            elif dtype == 9:  # string
-                string = struct.unpack(f"<{size}s", data_string)[0]
+            data_value = struct.unpack(f"<{size}{self.dtypes[dtype]}", data_string)
+            # Handle special cases
+            if dtype == 0:
+                # data object is tree; iterate through bytes again
+                data = self._extract_binary(data_value[0])
+            elif dtype == 9:
+                # data object is string; unpack words according to length+name
+                string = data_value[0]
                 data = b""
                 while string:
                     word, offset = self._extract_name(string)
                     data += word
                     string = string[offset:]
+            else:
+                data = data_value
             log.debug("data: %s", data)
             # Store evaluated bytes and repeat if necessary
             wit[name.decode()] = data
