@@ -28,6 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ref: https://github.com/ElsevierSoftwareX/SOFTX-D-20-00088/blob/15d72d95c9585ab7f2ad249d3f1ee8629896ae80/%2BWITio/%2Bdoc/README%20on%20WIT-tag%20format.txt
 """
 import collections.abc
+from dataclasses import dataclass, field
 import logging
 import struct
 
@@ -46,6 +47,7 @@ def map_nested_dicts_modify(dictionary, func):
             dictionary[key] = func(value)
 
 
+@dataclass
 class Witec:
     """A class to contain the converted data from a binary .WIP file
 
@@ -56,6 +58,10 @@ class Witec:
     dict : dict
         A nested data structure of the contents of a .WIP file
     """
+
+    file: str
+    magic: str = field(init=False, repr=False)
+    dict: dict = field(init=False, repr=False)
 
     dtypes = {
         0: "s",  # char
@@ -70,8 +76,9 @@ class Witec:
         9: "s",  # char
     }
 
-    def __init__(self, file):
-        with open(file, "rb") as raw:
+    def __post_init__(self) -> dict:
+        """Unpack the file type and converted file contents."""
+        with open(self.file, "rb") as raw:
             b_string = raw.read()
             # First 8 bytes describe file type
             self.magic = struct.unpack("<8s", b_string[:8])[0].decode()
