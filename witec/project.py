@@ -28,6 +28,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ref: https://github.com/ElsevierSoftwareX/SOFTX-D-20-00088/blob/15d72d95c9585ab7f2ad249d3f1ee8629896ae80/%2BWITio/%2Bdoc/README%20on%20WIT-tag%20format.txt
 """
 import collections.abc
+from collections import defaultdict
 from dataclasses import dataclass, field
 import logging
 import struct
@@ -92,7 +93,7 @@ class Witec:
 
     def _extract_binary(self, b_string):
         """Traverse through a byte string according to a fixed storage format."""
-        wit = {}
+        wit = defaultdict(lambda: defaultdict(dict))
         while b_string:
             shift = 0
             # First several bytes give name of field (variable in length)
