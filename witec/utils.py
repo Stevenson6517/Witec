@@ -28,6 +28,7 @@ import re
 
 import yaml
 
+from witec.project import Witec
 import witec.winspec
 
 
@@ -166,25 +167,30 @@ def metadata_from_wip(filename):
     metadata_wip : dict
         Acqusition settings and user notes from a project.
     """
-    ##Somehow we end up with a text file from the wip file.
-    ##The text variable below was just a practice file for me to use and should be changed
-
-    # wip_text = extract_text(filename)
-    wip_text = "hBN-10_loc-uppercenter_eye_exts-r_532nm_0800mW_f-ND10A_obj-50x_1000ms_2023-06-27_1.txt"
-    metadata_wip = _parse_wiptextfile(wip_text)
+    wip = Witec(filename)
+    metadata_wip = {}
+    data_keys = wip.data.keys()
+    for data_key in data_keys:
+        try:
+            data_text = wip.info(wip.data[data_key])
+            metadata_wip[data_key] = _parse_wiptextfile(data_text)
+        except TypeError:
+            continue
     return metadata_wip
 
 
 def _parse_wiptextfile(wip_text):
-    with open(wip_text, "r", encoding="latin-1") as f:
-        content = f.readlines()
-        wip_dict = {}
-        for i in content:
-            if re.findall("^.*:\t.*\n$", i) != []:
-                wip_dict[re.findall("^(.*):\t.*\n$", i)[0]] = re.findall(
-                    "^.*:\t(.*)\n$", i
-                )[0]
-    return wip_dict
+    lines = re.sub("\t", "", wip_text).splitlines()
+    wip_dict = {}
+    wip_dict["Information"] = lines[0]
+    for line in lines[1:]:
+        try:
+            key, *values = line.split(":")
+            value = ":".join(values)
+        except ValueError:
+            continue
+        wip_dict[key] = value
+    return {key: value for key, value in wip_dict.items() if value}
 
 
 def metadata_from_spe(filename):
