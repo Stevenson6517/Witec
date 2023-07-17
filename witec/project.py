@@ -163,3 +163,10 @@ class Witec:
     @property
     def data(self):
         return self.contents["WITec Project"]["Data"]
+
+    def info(self, data=None, num=1):
+        """Return the text file corresponding to the information tag saved with
+        an acquisition, accessed by data number."""
+        if data is None:
+            data = self.data[f"Data {num}"]
+        return data["TDStream"]["StreamData"]
