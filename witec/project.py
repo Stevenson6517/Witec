@@ -159,3 +159,7 @@ class Witec:
         info = witec.text_tools.striprtf(info)
         info = info[:-1]  # Remove hidden b'\x00' at end of string
         return info
+
+    @property
+    def data(self):
+        return self.contents["WITec Project"]["Data"]
