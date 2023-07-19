@@ -12,7 +12,7 @@ Verdi power at fiber tip: ~4 mW, same as near-IR laser.
 
  
 
-Green light not visible on CCD when coupled into SNOM tip input. No increase in T-B, L-R, or $\\sigma$ values.
+Green light not visible on CCD when coupled into SNOM tip input. No increase in T-B, L-R, or $\\Sigma$ values.
 
 -   Rotated endcap 180 degrees. Still no signal or spot on cantilever/screen.
 
