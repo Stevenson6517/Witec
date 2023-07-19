@@ -30,4 +30,4 @@ Either the beam isn't reaching the objective due to a missing/poorly aligned mir
 
  
 
-<img src="media/image1.png" style="width:3.75in;height:5in" />
+<img src="media/deflection-beam_misplaced.jpg" style="width:3.75in;height:5in" />
