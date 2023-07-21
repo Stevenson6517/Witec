@@ -4,15 +4,20 @@ channels:
   - defaults
 dependencies:
   - python>=3.10
+  - scifireaders
   - h5py
-  - jupyterlab
-  - jupytext
-  - matplotlib=3.7.*
+  - ipympl
+  # - jupyterlab
+  # - jupytext
+  - matplotlib
   - numpy
   - pandas
-  - pre-commit=3.*
+  - pre-commit
+  - pycroscopy
   - pytest
+  - pyUSID
+  - pyNSID
   - pyyaml
   - scienceplots
   - pip:
-    - sidpy
+    # - sidpy
