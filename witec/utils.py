@@ -194,7 +194,7 @@ def _parse_wiptextfile(wip_text):
 
 
 def metadata_from_spe(filename):
-    """Extract all non-data values and settings from a winspec .SPE file.
+    """Extract the full header from a winspec .SPE file.
 
     Parameters
     ----------
@@ -206,9 +206,7 @@ def metadata_from_spe(filename):
     metadata_spe : dict
         Acquisition and calibration settings.
     """
-    metadata_spe = witec.winspec.read_spe(filename)
-    del metadata_spe["data"]
-    return metadata_spe
+    return witec.winspec.SpeFile(filename).header
 
 
 def metadata_from_yaml(yaml_string):
