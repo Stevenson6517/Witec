@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - python>=3.10
+  - h5py
   - jupyterlab
   - jupytext
   - matplotlib=3.7.*
@@ -15,3 +16,5 @@ dependencies:
   - pyyaml
   - rsync
   - scienceplots
+  - pip:
+    - sidpy
