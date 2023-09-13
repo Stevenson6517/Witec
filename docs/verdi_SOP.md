@@ -59,7 +59,7 @@ during short-term shut downs.
    minutes.**
 3. During the cool-down cycle, the LBO temperature can be monitored from the
    main screen or the LBO Settings submenu. When the LBO temperature decreases
-   below 40ºC, tun the AC power switch on the power supply rear panel to the OFF
+   below 30ºC, tun the AC power switch on the power supply rear panel to the OFF
    position.
 4. Turn off the chiller.
 
