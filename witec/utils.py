@@ -73,7 +73,7 @@ def metadata_from_name(filename):
 
 # https://stackoverflow.com/questions/9507648/datetime-from-string-in-python-best-guessing-string-format
 def _assign_datetime(s_date):
-    dates = "witec/conventions/dates.yaml"
+    dates = pathlib.Path(pathlib.Path(__file__).parent, "conventions/dates.yaml")
     with open(dates, "r", encoding="utf-8") as stream:
         date_patterns = yaml.safe_load(stream)
     for pattern in date_patterns:
@@ -248,6 +248,3 @@ def assemble_metadata(basename, *yaml):
     for file in yaml:
         metadata.update(metadata_from_yaml(file))
     return metadata
-
-
-# +
