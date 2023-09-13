@@ -23,7 +23,7 @@ this file and calling any necessary functions.
 
 
 from datetime import datetime
-import os
+import pathlib
 import re
 
 import yaml
@@ -47,8 +47,8 @@ def metadata_from_name(filename):
     fields : dict
         key: value pairs, where values are extracted from filename
     """
-    basename = os.path.basename(filename)
-    slug, ext = os.path.splitext(basename)
+    basename = pathlib.Path(filename).name
+    slug = pathlib.Path(basename).stem
     fields_sep = slug.split("_")
     fields_sep = [field for field in fields_sep if field != ""]
     sample, location, identifier, meas_type = fields_sep[0:4]
@@ -218,7 +218,7 @@ def assemble_metadata(basename, *yaml):
     Parameters
     ----------
     basename : str
-        "Path/to/directory/structured_filename" (without extension)
+        "Path/to/directory/structured_filename"
 
     yaml: str (optional)
         Path to additonal yaml file(s) where other settings are stored.
@@ -242,8 +242,8 @@ def assemble_metadata(basename, *yaml):
       the last dictionary overwrites the original value.
     """
     metadata = {}
-    metadata["WIP"] = metadata_from_wip(basename + ".WIP")
-    metadata["SPE"] = metadata_from_spe(basename + ".SPE")
+    metadata["WIP"] = metadata_from_wip(pathlib.Path(basename).with_suffix(".WIP"))
+    metadata["SPE"] = metadata_from_spe(pathlib.Path(basename).with_suffix(".SPE"))
     metadata["Experiment"] = metadata_from_name(basename)
     for file in yaml:
         metadata.update(metadata_from_yaml(file))
