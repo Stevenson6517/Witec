@@ -6,6 +6,7 @@ import textwrap
 import os
 import sys
 from typing import Optional
+import struct
 
 from dateutil import parser
 import numpy as np
@@ -49,27 +50,7 @@ class SPE:
     dtype: Optional[type] = np.int32
 
     def __post_init__(self):
-        self.contents = witec.winspec.read_spe(self.file)
-        self._restore_datatypes(self.dtype)
-
-    def __str__(self):
-        description = {
-            "Filename": self.spefname,
-            "Size in memory (kb)": "{:,d}".format(round(self.size / 1e3)),
-            "Observation date": self.date,
-            "Data shape": self.data.shape,
-            "Accumulations": self.accumulations,
-            "Exposure (sec)": self.exposure,
-            "Background corrected": self.background,
-            "Flatfield corrected": self.flatfield,
-            "Chip Temp (C)": self.chip_temp,
-            "Axis": "\n" + textwrap.indent(self.axis.info, prefix="\t"),
-        }
-        return "\n".join([f"{key:<30}: {value}" for key, value in description.items()])
-
-    def _restore_datatypes(self, dtype=np.int16):
-        """Reduce contents filesize by converting data to numerical type."""
-        self.contents["data"] = np.asarray(self.contents["data"], dtype=dtype)
+        self.contents = witec.winspec.SpeFile(self.file)
 
     @property
     def data(self):
@@ -80,6 +61,54 @@ class SPE:
         """
         # return np.sum(self.contents["data"], axis=1, dtype=self.dtype)
         return self.contents.data
+
+    @property
+    def header(self):
+        header = get_dict(self.contents.header)
+        header["Comments"] = "".join(
+            byte.decode() for byte in struct.unpack("400p", header["Comments"])
+        )  # witec.winspec.c_char_Array_5_Array_80
+        header["ROIinfblk"] = get_dict(
+            header["ROIinfblk"]
+        )  # witec.winspec.ROIinfo_Array_10
+        header["SpecMirrorLocation"] = struct.unpack(
+            "2H", header["SpecMirrorLocation"]
+        )  # witec.winspec.c_short_Array_2
+        header["SpecMirrorPos"] = struct.unpack(
+            "2H", header["SpecMirrorPos"]
+        )  # witec.winspec.c_short_Array_2
+        header["SpecSlitLocation"] = struct.unpack(
+            "4H", header["SpecSlitLocation"]
+        )  # witec.winspec.c_short_Array_4
+        header["SpecSlitPos"] = struct.unpack(
+            "4I", header["SpecSlitPos"]
+        )  # witec.winspec.c_short_Array_4
+        header["xcalibration"] = get_dict(
+            header["xcalibration"]
+        )  # witec.winspec.AxisCalibration
+        header["ycalibration"] = get_dict(
+            header["ycalibration"]
+        )  # witec.winspec.AxisCalibration
+        for calib in ["xcalibration", "ycalibration"]:
+            for key in header[calib]:
+                if "string" in key:
+                    header[calib][key] = struct.unpack(
+                        f"{len(header[calib][key])}s", header[calib][key]
+                    )[0]
+                else:
+                    try:
+                        header[calib][key] = struct.unpack(
+                            f"{len(header[calib][key])}B", header[calib][key]
+                        )
+                    except struct.error:
+                        header[calib][key] = struct.unpack(
+                            f"{len(header[calib][key])}d", header[calib][key]
+                        )
+                    except TypeError:
+                        continue
+        map_nested_dicts_modify(header, lambda v: v.decode("ascii"))
+
+        return header
 
     @property
     def axis(self):
