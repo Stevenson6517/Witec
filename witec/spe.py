@@ -89,19 +89,25 @@ class SPE:
         header["ycalibration"] = get_dict(
             header["ycalibration"]
         )  # witec.winspec.AxisCalibration
-        for calibration in ["xcalibration", "ycalibration"]:
-            for key in header[calibration]:
-                try:
-                    header[calibration][key] = struct.unpack(
-                        f"{len(header[calibration][key])}B", header[calibration][key]
-                    )
-                except struct.error:
-                    header[calibration][key] = struct.unpack(
-                        f"{len(header[calibration][key])}d", header[calibration][key]
-                    )
-                except TypeError:
-                    continue
-        map_nested_dicts_modify(header, lambda v: v.decode())
+        for calib in ["xcalibration", "ycalibration"]:
+            for key in header[calib]:
+                if "string" in key:
+                    header[calib][key] = struct.unpack(
+                        f"{len(header[calib][key])}s", header[calib][key]
+                    )[0]
+                else:
+                    try:
+                        header[calib][key] = struct.unpack(
+                            f"{len(header[calib][key])}B", header[calib][key]
+                        )
+                    except struct.error:
+                        header[calib][key] = struct.unpack(
+                            f"{len(header[calib][key])}d", header[calib][key]
+                        )
+                    except TypeError:
+                        continue
+        map_nested_dicts_modify(header, lambda v: v.decode("ascii"))
+
         return header
 
     @property
