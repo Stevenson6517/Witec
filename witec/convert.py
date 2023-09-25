@@ -90,22 +90,25 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
     # Pick out spatial coordinates from Witec file
     wip_info = witec.utils.metadata_from_wip(project)
 
-    points_per_line = int(wip_info["Data 1"]["Points per Line"])
-    scan_width = float(wip_info["Data 1"]["Scan Width [µm]"])
-    start_x = float(wip_info["Data 1"]["Scan Origin X [µm]"])
+    # Assume we want the info from the first available information tag
+    default_tag = wip_info["Tag 0"]
+
+    points_per_line = int(default_tag["Points per Line"])
+    scan_width = float(default_tag["Scan Width [µm]"])
+    start_x = float(default_tag["Scan Origin X [µm]"])
     stop_x = start_x + scan_width
 
-    lines_per_image = int(wip_info["Data 1"]["Lines per Image"])
-    scan_height = float(wip_info["Data 1"]["Scan Height [µm]"])
-    start_y = float(wip_info["Data 1"]["Scan Origin Y [µm]"])
+    lines_per_image = int(default_tag["Lines per Image"])
+    scan_height = float(default_tag["Scan Height [µm]"])
+    start_y = float(default_tag["Scan Origin Y [µm]"])
     stop_y = start_y + scan_height
 
-    number_of_images = int(wip_info["Data 1"]["Number of Images"])
-    scan_depth = float(wip_info["Data 1"]["Scan Depth [µm]"])
-    start_z = float(wip_info["Data 1"]["Scan Origin Z [µm]"])
+    number_of_images = int(default_tag["Number of Images"])
+    scan_depth = float(default_tag["Scan Depth [µm]"])
+    start_z = float(default_tag["Scan Origin Z [µm]"])
     stop_z = start_z + scan_depth
 
-    z_rotation = wip_info["Data 1"]["Z-Rotation [°]"]
+    z_rotation = default_tag["Z-Rotation [°]"]
 
     pos_x_vals = np.linspace(start_x, stop_x, points_per_line)
     pos_y_vals = np.linspace(start_y, stop_y, lines_per_image)
