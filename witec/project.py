@@ -85,9 +85,6 @@ class Witec:
             self.file_type = struct.unpack("<8s", b_string[:8])[0].decode()
             # Remaining bytes follow predictable pattern
             self.contents = self._extract_binary(b_string[8:])
-            # Apply fixes to fields with known errors
-            info = self.contents["WITec Project"]["Data"]["Data 1"]["TDStream"]
-            info["StreamData"] = self._convert_information_tag(info["StreamData"])
             # Convert remaining strings in dictionary
             map_nested_dicts_modify(self.contents, lambda v: v.decode("windows-1252"))
 
@@ -164,9 +161,14 @@ class Witec:
     def data(self):
         return self.contents["WITec Project"]["Data"]
 
-    def info(self, data=None, num=1):
-        """Return the text file corresponding to the information tag saved with
-        an acquisition, accessed by data number."""
-        if data is None:
-            data = self.data[f"Data {num}"]
-        return data["TDStream"]["StreamData"]
+    @property
+    def info(self):
+        """Return all text files corresponding to the information tag saved with
+        an acquisition."""
+        info_tags = []
+        for data_num in range(self.data["NumberOfData"][0]):
+            data = self.data[f"Data {data_num}"]
+            if "Information" in data["TData"]["Caption"]:
+                info = self._convert_information_tag(data["TDStream"]["StreamData"])
+                info_tags.append(info)
+        return info_tags
