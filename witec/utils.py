@@ -169,13 +169,8 @@ def metadata_from_wip(filename):
     """
     wip = Witec(filename)
     metadata_wip = {}
-    data_keys = wip.data.keys()
-    for data_key in data_keys:
-        try:
-            data_text = wip.info(wip.data[data_key])
-            metadata_wip[data_key] = _parse_wiptextfile(data_text)
-        except TypeError:
-            continue
+    for i, tag in enumerate(wip.info):
+        metadata_wip[f"Tag {i}"] = _parse_wiptextfile(tag)
     return metadata_wip
 
 
