@@ -150,10 +150,12 @@ index = 1
 spectrum = spe_object.data[index]
 wavelengths = spe_object.axis
 
-fig, ax = plt.subplots()
-ax.plot(wavelengths, spectrum)
-ax.set_xlabel(spe_object.header["xcalibration"]["string"])
-ax.set_ylabel("Intensity")
-ax.set_title(spe_file.name)
-plt.show()
+with plt.style.context("default"):
+    fig, ax = plt.subplots()
+    ax.plot(wavelengths, spectrum)
+    ax.set_xlabel(spe_object.header["xcalibration"]["string"])
+    ax.set_ylabel("Intensity")
+    ax.set_title(spe_file.name)
+    plt.tight_layout()
+    plt.show()
 # -
