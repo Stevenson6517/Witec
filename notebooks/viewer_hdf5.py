@@ -61,7 +61,7 @@ def add_colorbar(im, aspect=20, pad_fraction=0.5, **kwargs):
 # If you connect your personal computer to this network drive, you
 # can access its files
 if "darwin" in sys.platform:
-    NETWORK_PATH = "/Volumes/public/"
+    NETWORK_PATH = "/Volumes/HaglundNAS/"
 elif "win32" in sys.platform:
     NETWORK_PATH = (
         "Z://"  # Adjust as necessary, depending on how you mounted network drive
@@ -76,7 +76,7 @@ if NETWORK_DIR.exists():
     print(
         "Connected to Network Directory. Defaulting search to the following location:"
     )
-    DATA_DIR = pathlib.Path(NETWORK_DIR, "David Curie/Data")
+    DATA_DIR = pathlib.Path(NETWORK_DIR, "curieda/data")
 else:
     print("Network Directory unavailable. Defaulting search to the following location:")
     DATA_DIR = pathlib.Path("../data")
