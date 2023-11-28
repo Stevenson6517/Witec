@@ -40,8 +40,20 @@ import sys
 
 import h5py
 import matplotlib.pyplot as plt
+from mpl_toolkits import axes_grid1
 import numpy as np
 import pyUSID as usid
+
+
+# See https://nbviewer.jupyter.org/github/mgeier/python-audio/blob/master/plotting/matplotlib-colorbar.ipynb
+def add_colorbar(im, aspect=20, pad_fraction=0.5, **kwargs):
+    divider = axes_grid1.make_axes_locatable(im.axes)
+    width = axes_grid1.axes_size.AxesY(im.axes, aspect=1.0 / aspect)
+    pad = axes_grid1.axes_size.Fraction(pad_fraction, width)
+    current_ax = plt.gca()
+    cax = divider.append_axes("right", size=width, pad=pad)
+    plt.sca(current_ax)
+    return im.axes.figure.colorbar(im, cax=cax, **kwargs)
 
 
 # This project saves data in a network drive, available only from a Vanderbilt
@@ -174,9 +186,16 @@ intensity_map = np.reshape(
     intensity_values, (len(rows), len(cols), -1)
 )  # shape (x, y, I) where I is Intensity
 
-fig, ax = plt.subplots()
-ax.imshow(intensity_map, cmap="viridis")
-plt.show()
+with plt.style.context("default"):
+    fig, ax = plt.subplots()
+    ax.set_title(f"{h5_path.stem}\n")
+    img = ax.imshow(intensity_map, cmap="gist_stern")
+    add_colorbar(img, label="Intensity")
+    ax.set_aspect("equal")
+    output = h5_path.with_suffix(".png")
+    fig.savefig(output, dpi=300, bbox_inches="tight")
+    print(f"Figure saved to {output}")
+    plt.show()
 # -
 
 # # pyUSID native exploration
