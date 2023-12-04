@@ -39,6 +39,7 @@ import pathlib
 import sys
 
 import h5py
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pyUSID as usid
@@ -67,7 +68,7 @@ if NETWORK_DIR.exists():
     DATA_DIR = pathlib.Path(NETWORK_DIR, "David Curie/Data")
 else:
     print("Network Directory unavailable. Defaulting search to the following location:")
-    DATA_DIR = pathlib.Path("../data")
+    DATA_DIR = pathlib.Path("/Users/anishgiri/Documents/Haglund_stevenson/Witec/data/hBN-10-CH4")
 print(DATA_DIR)
 
 # +
@@ -81,7 +82,7 @@ for i, file in enumerate(h5_files):
 
 # +
 # Select a file according to desired index above
-h5_path = list(h5_files)[0]
+h5_path = list(h5_files)[12]
 
 # Load the file manually
 with h5py.File(h5_path, mode="r") as h5_file:
@@ -162,6 +163,9 @@ print(
 # whose shape is determined by the number of unique x and y coordinates from
 # the position dataset.
 
+
+
+
 # +
 rows = np.unique(position_dataset[:, 0])  # x coordinates
 cols = np.unique(position_dataset[:, 1])  # y coordinates
@@ -170,14 +174,30 @@ position_values = np.reshape(position_dataset, (len(rows), len(cols), -1))
 intensity_values = np.sum(
     main_dataset, axis=1
 )  # Sum intensity across all pixels in each spectrum
+
+# intensity_values = []
+
+# for i in range(len(main_dataset)):
+#     a = three_maxima_points(spectroscopic_dataset[0], main_dataset[i])
+#     intensity_values.append(a[1][1])
+    
+
 intensity_map = np.reshape(
     intensity_values, (len(rows), len(cols), -1)
 )  # shape (x, y, I) where I is Intensity
 
+
+
 fig, ax = plt.subplots()
-ax.imshow(intensity_map, cmap="viridis")
+cax = ax.imshow(intensity_map, cmap="gist_stern")
+
+# Add colorbar
+cbar = plt.colorbar(cax)
+cbar.set_label('Intensity', rotation=270, labelpad=15)
+
 plt.show()
 # -
+
 
 # # pyUSID native exploration
 #
@@ -193,8 +213,195 @@ plt.show()
 # when switching branches.
 
 # +
+import numpy as np
+from scipy.ndimage import gaussian_filter
+from scipy.signal import find_peaks
+import matplotlib.pyplot as plt
 
-with h5py.File(h5_path, mode="r") as h5_file:
-    h5_main = usid.hdf_utils.get_all_main(h5_file)[-1]
-    h5_main.visualize()
+def smooth(list_x, list_y):
+    # Assuming list_x and list_y are your data points
+    list_x = np.array(list_x)  # Make sure list_x is a NumPy array
+    list_y = np.array(list_y)
+    
+    # Applying a Gaussian filter to smooth the data
+    smoothed_y = gaussian_filter(list_y, sigma=1.7)
+    
+    # Define the height threshold
+    height_threshold = max(smoothed_y) / 2
+    
+    # Re-running the peak finding with smoothed data
+    smoothed_peaks, _ = find_peaks(smoothed_y, height=height_threshold)
+    
+    # Plotting the smoothed data and the detected peaks
+    plt.figure(figsize=(12, 6))
+    #plt.scatter(x_data, y_data, label='Data', s=1)
+    
+    #plt.plot(list_x, smoothed_y, label='Smoothed Data')
+    #plt.plot(list_x[smoothed_peaks], smoothed_y[smoothed_peaks], "x", label='Detected Peaks')
+    plt.title('Smoothed Data')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.legend()
+    plt.show()
+    return [list_x, smoothed_y]
+    
+list_1 = spectroscopic_dataset[0]
+list_2 = main_dataset[550]
+data_spec = smooth(list_1, list_2)     
+
+
+# +
+
+def plot_fit(wavelength_list, amplitude_list):
+    import numpy as np
+    from scipy.optimize import curve_fit
+    import matplotlib.pyplot as plt
+    import math
+    
+    import pandas as pd  
+    
+    def lorentz(x, amp, wid, cen):
+        return amp * (1/np.pi) * (wid / ((x - cen)**2 + wid**2))
+    
+    def gaussian(x, amp, wid, cen):
+        return amp * np.exp(-((x - cen)**2) / (2*wid**2))
+    
+    def function_mix(x, params, number):
+        total_function = np.zeros_like(x)
+        for i in range(number):
+            amp = params[i*3]
+            cen = params[i*3 + 1]
+            wid = params[i*3 + 2]
+            total_function += gaussian(x, amp, wid, cen)
+        return total_function + params[-1]
+        
+    # Sample dataset
+    list_1 = wavelength_list
+    list_2 = amplitude_list
+    data_spec = smooth(list_1, list_2)   
+    
+    list_1 = data_spec[0]
+    list_2 = data_spec[1]
+    
+    list_x = []
+    list_y = []
+    
+    for i in range(len(list_1)):
+        if (list_1[i] > 480 and list_1[i] < 700):
+            list_x.append(list_1[i])
+            list_y.append(list_2[i])
+    
+    # Convert lists to NumPy arrays
+    x_data = np.array(list_x)
+    y_data = np.array(list_y)
+    
+    initial_guess = [2000, 537, 0.5,
+                     3000, 543, 0.5,
+                     3000, 543.26, 4.40,
+                     2100, 549, 1,
+                     1800, 556.13, 0.68,
+                     400, 560, 0.3,
+                     800, 564, 0.48,
+                     800] # closest 532, 542, gives more appropriate but one negative
+    
+    upper_bounds = [2000+200, 537+1, 0.5+0.3,
+                    3000+500, 543+2, 0.5+0.3,
+                    3000+200, 543.26+1, 4.40+2,
+                    2100+100, 549+1, 1+0.5,
+                    1800+100, 556.13+1, 0.68+0.2,
+                    400+100, 560+1, 0.3+1,
+                    800+100, 564+1, 0.48+0.3,
+                    800+100]
+    
+    lower_bounds = [2000-200, 537-1, 0.5-0.3,
+                    3000-500, 543-2, 0.5-0.3,
+                    3000-200, 543.26-1, 4.40-2,
+                    2100-100, 549-1, 1-0.5,
+                    1800-100, 556.13-1, 0.68-0.2,
+                    400-100, 560-1, 0.3-1,
+                    800-100, 564-1, 0.48-0.3,
+                    800-50]
+    
+    
+    Num_functions = 6
+    params, covariance = curve_fit(
+        lambda x, *params: function_mix(x, params, Num_functions), 
+        x_data, 
+        y_data, 
+        p0=initial_guess,
+        bounds=(lower_bounds, upper_bounds),
+        maxfev=1000000
+    )
+    
+    for i in range(Num_functions):
+        amp = params[i*3]
+        cen = params[i*3 + 1]
+        wid = params[i*3 + 2]
+        
+        y_fun_individual = lorentz(x_data, amp, wid, cen)
+        #plt.plot(x_data, y_fun_individual, label=f'L {i+1}', linestyle='--', linewidth=1)
+        
+    y_fitted = function_mix(x_data, params, Num_functions)
+    #plt.figure()
+    #plt.plot(x_data, y_fitted, label='Fitted function with all Gaussians', linewidth=1)
+    #plt.plot(list_x, list_y, label='Smoothed Data')
+
+    ###
+
+    # Extracting central wavelength values from params
+    central_wavelengths = [params[i*3 + 1] for i in range(Num_functions)]
+    
+    # Sorting the central wavelengths and keeping track of the indices
+    sorted_indices = np.argsort(central_wavelengths)
+    sorted_central_wavelengths = np.array(central_wavelengths)[sorted_indices]
+    
+    # Calculating y-values for sorted central wavelengths
+    sorted_y_values = [function_mix(np.array([cw]), params, Num_functions)[0] for cw in sorted_central_wavelengths]
+    
+    # Combining x and y values
+    sorted_peaks = list(zip(sorted_central_wavelengths, sorted_y_values))
+
+    return sorted_peaks
+
+list_1 = spectroscopic_dataset[0]
+list_2 = main_dataset[550]
+plotting = plot_fit(list_1, list_2)
+
+
+# +
+def colorplot_flake(num):
+    rows = np.unique(position_dataset[:, 0])  # x coordinates
+    cols = np.unique(position_dataset[:, 1])  # y coordinates
+    position_values = np.reshape(position_dataset, (len(rows), len(cols), -1))
+    
+    intensity_values = np.sum(
+        main_dataset, axis=1
+    )  # Sum intensity across all pixels in each spectrum
+    
+    intensity_values = []
+    
+    for i in range(len(main_dataset)):
+        a = plot_fit(spectroscopic_dataset[0], main_dataset[i])
+        intensity_values.append(a[num][1])
+        
+    
+    intensity_map = np.reshape(
+        intensity_values, (len(rows), len(cols), -1)
+    )  # shape (x, y, I) where I is Intensity
+    
+    
+    
+    fig, ax = plt.subplots()
+    cax = ax.imshow(intensity_map, cmap="gist_stern")
+    
+    # Add colorbar
+    cbar = plt.colorbar(cax)
+    wav = 111
+    bar.set_label(f'Intensity at {wav} nm', rotation=270, labelpad=15)
+    
+    plt.show()
+
+colorplot_flake(4)
 # -
+
+
