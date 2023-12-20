@@ -9,6 +9,7 @@ dependencies:
   - ipympl
   # - jupyterlab
   # - jupytext
+  - lmfit
   - matplotlib
   - make
   - numpy
