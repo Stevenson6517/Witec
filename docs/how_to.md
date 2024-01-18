@@ -31,7 +31,7 @@
 ### Coherent
 
 - [Verdi-V5 Preinstallation Manual](manuals/Verdi_V2-V5-V6_Preinstallation.pdf)
-- [Verdi-V8 Operation Manual](manuals/Verdi_V8-V10_Manual.pdf) (replacement manual for V5)
+- [Verdi-V5 Operation Manual](manuals/Verdi_V2-V5-V6_Manual.pdf)
 
 ### Schott
 
