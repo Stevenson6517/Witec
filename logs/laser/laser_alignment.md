@@ -263,3 +263,88 @@ flaw in the Verdi output. I don't have a fiber scope handy to look for debris
 or burn marks at the face of the input fiber, so I turn my attention to
 investigating the Verdi output.
 
+
+### Perform LBO optimization
+
+- Summary of LBO optimization procedure (link section in PDF)
+- Put recorded settings in separate log file (link here)
+
+After the LBO temperature optimization, I looked at the output spectra from the
+laser through the existing fiber coupler and single-mode fiber. The figure
+below shows the spectrum at previous PL conditions (ND1 filter coupled into
+single-mode fiber via 10x objective), and the same measurement again but with
+an ND4 filter.
+
+```python
+single_mode_sources = data_directory.glob("laser/*SMfiber*2024-01-26*")
+
+with plt.style.context(["default", "science", "notebook"]):
+    fig, ax = plt.subplots()
+    for source in single_mode_sources:
+        avantes = pyAvantes.Raw8(source)
+        view_spectrum(ax, avantes.wavelength, avantes.scope, {"label":f"{avantes.comment}"})
+    ax.set_xlim(500, 650)
+    ax.set_title("Indirect laser measurement at various powers")
+    figname = target_directory / "indirect_alignment_singlemode.svg"
+    fig.savefig(figname)
+    print(f"Figure saved to {figname}")
+    plt.show()
+```
+
+![Laser emission at WITec input after LBO optimization](media/indirect_alignment_singlemode.svg)
+
+The image above shows no obvious reduction of the secondary spectral features
+after the laser line.
+
+For good measure, I investigated the new laser output by couping directly into
+the Avantes multimode fiber (bypassing the fiber coupler and single-mode
+fiber), just to be sure that the extra signal is not coming from the existing
+fiber assembly. The figure below shows the results of this more direct
+measurement.
+
+```python
+multi_mode_sources = data_directory.glob("laser/*MMfiber*2024-01-26*")
+
+with plt.style.context(["default", "science", "notebook"]):
+    fig, ax = plt.subplots()
+    for source in multi_mode_sources:
+        avantes = pyAvantes.Raw8(source)
+        view_spectrum(ax, avantes.wavelength, avantes.scope, {"label":f"{avantes.comment}"})
+    ax.set_xlim(500, 650)
+    ax.set_title("Direct laser measurement at various alignments")
+    figname = target_directory / "direct_alignment_multimode.svg"
+    fig.savefig(figname)
+    print(f"Figure saved to {figname}")
+    plt.show()
+```
+
+![Laser emission observed at Verdi exit](media/direct_alignment_multimode.svg)
+
+The image above shows mixed results. In some handheld arrangements, the laser
+line looks slightly cleaner, but in at least one alignment configuration, there
+appears to be more spectral broadening than before.
+
+It is worth noting that in these collection arrangements, only one ND filter
+(ND4) was used before the Avantes spectrometer, whereas the initial
+investigations above used some combination of two ND filters. It is likely that
+the extra ND filters were cutting out this noise before.
+
+My conclusion from the LBO optimization is that the process didn't hurt the
+emission in terms of spectral line width, but the source of the spectral
+contamination remains unknown.
+
+Not shown or recorded in any of the previous spectra is another spectral
+feature slightly below 900 nm. This showed up in rare cases when inserting the
+Avantes multi-mode fiber at the Verdi exit port, and is not simultaneously
+present when the rest of the noise is visible on the spectrometer.
+
+While both the direct and indirect laser measurements show a broadened laser
+line, the results of the above investigations make me believe that the source
+of the contamination lies mainly in the Verdi assembly, but that we see these
+effects only when we are coaxially aligned.
+
+I turn my attention now to disrupting the coaxial alignment of the single-mode
+fiber in an attempt to pick out a sufficiently intense laser line that doesn't
+contain all of the superfluous signal that is presumably present along the
+immediate optical axis.
+
