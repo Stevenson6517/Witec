@@ -682,3 +682,113 @@ However, if the secondary signal is coming from the fluorescent cladding on the
 face of the single-mode fiber, then no amount of laser filtering will fix our
 issue.
 
+### Laser free-space investigation
+
+To investigate if the polluted spectral features are coming from the
+single-mode fiber or from the laser, I once again investigated the laser line
+directly from the Verdi, but avoided any fibers altogether.
+
+With all people evacuated from the room, and the laser at its lowest power
+setting (0.01 W), I took a glass cover slip and picked off the Verdi output at
+the exit port at a right angle so that it was directed across the room, outside
+of the laser containment enclosure. I took the 532 nm long pass filter from the
+WITec assembly and mounted it after the cover slip. I then placed the Avantes
+spectrometer on a stand on a portable table and steered the laser beam into the
+entrance port of the Avantes spectrometer without a fiber in place. The exact
+alignment of the beam was hard to gauge, but I saw what I needed to see right
+away without having to spend much time tweaking alignment.
+
+The spectrum below represents the laser signal without any possibility of
+fluorescence from any cladding around the core of a fiber optic cable.
+
+```python
+source = data_directory / "laser" / "Verdi-V5_spec_0010mW_f-532LP_free-space_2024-02-02-14-13-00.RAW8"
+target = target_directory / source.name
+avantes = pyAvantes.Raw8(source)
+
+with plt.style.context(["default", "science", "notebook"]):
+    fig, ax = plt.subplots()
+    view_spectrum(ax, avantes.wavelength, avantes.scope, {"label":f"{avantes.comment}"})
+    ax.set_xlim(525, 580)
+    figname = target.with_suffix(".svg")
+    fig.savefig(figname)
+    print(f"Figure saved to {figname}")
+    plt.show()
+```
+
+![Laser line reflected off glass cover slip at Verdi exit](media/Verdi-V5_spec_0010mW_f-532LP_free-space_2024-02-02-14-13-00.svg)
+
+At first glance, this looks like it could be our culprit, but when I overlay
+this spectrum on top of the types of spectra we are getting in the WITec
+microscope, the spectral features do not overlap. See the example below.
+
+```python
+avantes_source = data_directory / "laser" / "Verdi-V5_spec_0010mW_f-532LP_free-space_2024-02-02-14-13-00.RAW8"
+avantes = pyAvantes.Raw8(avantes_source)
+
+winspec_source = data_directory / "substrate-tests" / "substrate-tests_cover-slip.spe"
+winspec = SPE(winspec_source)
+
+target = target_directory / "free_space_microscope_comparison_1"
+
+def normalize(array):
+    return (array - np.min(array)) / (np.max(array) - np.min(array))
+
+with plt.style.context(["default", "science", "notebook"]):
+    fig, ax = plt.subplots()
+    view_spectrum(ax, avantes.wavelength, normalize(avantes.scope), {"label":f"{avantes.comment}"})
+    view_spectrum(ax, winspec.axis, normalize(winspec.data[0]), {"label":"WITec spectrometer after glass cover slip"})
+    ax.set_xlim(525, 580)
+    ax.set_title("Normalized comparison of laser line")
+    figname = target.with_suffix(".svg")
+    fig.savefig(figname)
+    print(f"Figure saved to {figname}")
+    plt.show()
+```
+
+![Normalized laser line of free space and WITec microscope](media/free_space_microscope_comparison_1.svg)
+
+The figure above shows a disconnect between one directly-observed laser
+spectrum and the indirectly-observed laser spectrum in the WITec.
+
+I investigated more representative spectra of the Verdi laser in a free-space
+configuration in hopes of finding an exact match of spectral features. The
+example spectra below fail to show a one-to-one correlation of an observed
+Verdi spectrum and the WITec sample spectra.
+
+```python
+avantes_sources = data_directory.glob("laser/Verdi*free-space*2024-02-03*.RAW8")
+
+winspec_source = data_directory / "substrate-tests" / "substrate-tests_cover-slip.spe"
+winspec = SPE(winspec_source)
+
+target = target_directory / "free_space_microscope_comparison_2"
+
+def normalize(array):
+    return (array - np.min(array)) / (np.max(array) - np.min(array))
+
+with plt.style.context(["default", "science", "notebook"]):
+    fig, ax = plt.subplots()
+    for source in avantes_sources:
+        avantes = pyAvantes.Raw8(source)
+        view_spectrum(ax, avantes.wavelength, normalize(avantes.scope), {"label":f"{avantes.comment}"})
+    view_spectrum(ax, winspec.axis, normalize(winspec.data[0]), {"label":"WITec spectrometer after glass cover slip"})
+    ax.set_xlim(525, 580)
+    ax.set_title("Normalized comparison of laser line")
+    figname = target.with_suffix(".svg")
+    fig.savefig(figname)
+    print(f"Figure saved to {figname}")
+    plt.show()
+```
+
+![Normalized laser line of free space and WITec microscope](media/free_space_microscope_comparison_2.svg)
+
+The laser spot size at the Verdi exit is approximately 2.5 mm wide, but the
+opening of the Avantes entrance port is smaller than that. As such, I did not
+explore the entire beam profile of the Verdi exit beam. Because the spectral
+features that we are seeing in the WITec microscope do not match up with what
+I saw in my preliminary free-space investigation, I cannot be certain that
+these spectral features are from the Verdi alone. However, this demonstration
+confirms that the laser light coming from the Verdi exit is not as clean as we
+would hope. I do feel more confident the Verdi _could_ be the culprit enough
+for me to warrant investment in a 532 nm laser line clean up filter.
