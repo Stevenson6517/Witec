@@ -792,3 +792,80 @@ these spectral features are from the Verdi alone. However, this demonstration
 confirms that the laser light coming from the Verdi exit is not as clean as we
 would hope. I do feel more confident the Verdi _could_ be the culprit enough
 for me to warrant investment in a 532 nm laser line clean up filter.
+
+### ThorLabs follow up
+
+I reached out to ThorLabs to see if they knew of any fluorescence that
+originate in the fiber cladding. My interaction is included below.
+
+> On Feb 5, 2024, at 5:55 PM, Tech Support <TechSupport@thorlabs.com> wrote:
+> 
+> Hi David,
+>  
+> Thank you for contacting Thorlabs! Most autofluorescence we've seen in fiber
+> patch cables is in multimode fiber, usually excited by wavelengths in the blue
+> (around 405 to 470nm) and emitting around the green (around 570nm).
+>  
+> It tends to be more common for larger NA and core size fibers with polymer
+> claddings. That said, most of our standard single mode fibers have relatively
+> small NA values and are usually glass-clad, not polymer.
+>  
+> While I wouldn't completely rule out fluorescence, I'm personally not seeing
+> much data on it happening or at what wavelengths for our single mode fiber.
+>  
+> Feel free to reach out if you have any more questions!
+>  
+> Best Regards,
+> 
+> Elena Gies
+> Applications Engineer
+> THORLABS Inc.
+> P: (973) 300 3000
+> www.thorlabs.com
+> We are Hiring – See our Career Opportunities
+> 
+> If you are inquiring about a custom item that is controlled under the
+> International Traffic in Arms Regulations (ITAR), please let us know so that we
+> can put you in contact with our Controlled Access Group who handles export
+> sensitive requests.
+> 
+> > ------------------- Original Message -------------------
+> > From: David Curie <david.a.curie@vanderbilt.edu>;
+> > Received: Mon Feb 05 2024 14:27:07 GMT-0500 (Eastern Standard Time)
+> > To: 
+> >  
+> > EXTERNAL: Use Caution with Attachments and Links.
+> > 
+> > Hello,
+> >  
+> > Our lab uses a yellow Thorlabs single mode fiber FC/PC patch cable to couple
+> > a laser (532 nm) from free-space into a confocal microscope setup.
+> >  
+> > Our fiber is missing the white label normally present on one end of the fiber
+> > that specifies its type. According to the conventions on your website, these
+> > would be labeled something like P1-460Y-FC-1. The only marking I can see on
+> > either end of the fiber is the code TP00696518. I am having trouble finding
+> > information about this fiber. I suspect this fiber is at least 10 years old.
+> >  
+> > My investigation more deeply stems into superfluous spectra showing up in my
+> > data and I’m trying to rule out the source of the error from either the laser
+> > or the fiber. An example spectra appears below that highlights unexpected
+> > signal from 535–550 nm. This shows up whether I couple the laser directly to
+> > the spectrometer from the existing single mode fiber or with a multi-mode
+> > fiber. I have not been able to recreate this spectrum when I couple the laser
+> > into the spectrometer from free space and bypass any fibers altogether.
+> >  
+> > Do you know if the cladding on any of your fibers should fluoresce at these
+> > wavelengths? The interaction is very weak and is approximately 6 orders of
+> > magnitude weaker than the laser line (operating nominally 10 mW at most). The
+> > example spectra below has an OD6 longpass filter at 532 nm.
+> >  
+> > <substrate-tests_cover-slip.png>
+> >  
+> > Thank you,
+> >  
+> > David
+> >  
+> > David Curie
+> > PhD Candidate  |  Vanderbilt University  |   Nashville, TN
+
