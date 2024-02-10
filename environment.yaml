@@ -22,5 +22,7 @@ dependencies:
   - pyyaml
   - rsync
   - scienceplots
+  - pip
   - pip:
     # - sidpy
+    - git+https://github.com/davidcurie/pyAvantes.git
