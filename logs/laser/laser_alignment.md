@@ -869,3 +869,66 @@ originate in the fiber cladding. My interaction is included below.
 > > David Curie
 > > PhD Candidate  |  Vanderbilt University  |   Nashville, TN
 
+### Laser line filter
+
+We purchased a Semrock laser line clean up filter (LL-01-532) to mitigate any
+signal not associated with 532 nm laser emission. The below spectra outline the
+results with the filter placed at various positions in the beam path.
+
+I placed a laser line filter at the Verdi exit.
+
+- `/data/substrate-tests/substrate-tests_cover-slip_532nm_0010mW_f-LL01-532_1000ms_2024-02-15_1.SPE` 
+
+The laser line filter didn't clean up the messy spectra.
+
+I placed a laser line filter on top of the sliding beam prism used to
+divert white light to the sample. Position 1 of the sliding prism directs light
+from the lamp onto the sample. Positions 2 and 3 are normally unimpeded paths
+for the laser to illuminate the sample and to block any white light from the
+lamp. There is space for a 1-inch optic to sit in these holders perpendicular
+to the vertical laser beam. This intercepts the laser signal after the fiber
+and before the sample.
+
+- `/data/substrate-tests/substrate-tests_cover-slip_532nm_0010mW_f-LL01-532_1000ms_2024-02-15_2.SPE` 
+
+The laser line filter didn't clean up the messy spectra.
+
+I tried adjusting the top output coupler to minimize the messy spectra with the
+LL at the BS.
+
+- `/data/substrate-tests/substrate-tests_cover-slip_532nm_0010mW_f-LL01-532_1000ms_2024-02-15_3.SPE` 
+
+I can't remember what I did here.
+
+- `/data/substrate-tests/substrate-tests_cover-slip_532nm_0010mW_f-LL01-532_1000ms_2024-02-15_4.SPE` 
+
+---
+
+I took some 405 laser measurements in the morning. This required me to adjust
+the input fiber micrometer screw. I also tweaked up the top output coupler for
+the 405 arrangement. I then went back to investigating the Verdi.
+
+I started with the settings as they were yesterday, but I removed the LL filter
+to get a baseline alignment.
+
+- `/data/substrate-tests/substrate-tests_hBN-10-CH4_exts-r_532nm_obj-100x_0500ms_2024-02-16_1_no-LL.SPE`
+
+I then systematically inserted the LL filter at various points along the optic
+path. I was curious if walking the laser slightly out of the input fiber holder
+to the back of the microscope would affect the scattering of the fluorescence.
+
+- `/data/substrate-tests/substrate-tests_hBN-10-CH4_exts-r_532nm_obj-100x_0500ms_2024-02-16_[2-8].SPE`
+
+Case 3 appears to show that the LL filter is working at the beam splitter, but
+I learned after the fact that the LL filter wasn't seated completely flat. Once
+it was jostled and settled into its stable minimum position in the holder, the
+messy spectra came back. This tells me that the reflected light at the top of
+the LL filter is being directed up into the MM fiber output. So while the laser
+is reaching the sample at a pure 532 nm, the collected signal still contains
+stray fluorescence from the fiber.
+
+By case 6, I moved the laser back into parallel focus (adjusted micrometer
+screw until spot sizes of stray light in the video camera feed were minimized).
+
+Case 8: Inserted new single-mode fiber (P1-630A-FC-5). Still no clean up.
+
