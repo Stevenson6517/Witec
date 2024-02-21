@@ -7,9 +7,11 @@ dependencies:
   - jupyterlab
   - jupytext
   - matplotlib=3.7.*
+  - make
   - numpy
   - pandas
   - pre-commit=3.*
   - pytest
   - pyyaml
+  - rsync
   - scienceplots
