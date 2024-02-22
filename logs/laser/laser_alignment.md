@@ -932,3 +932,13 @@ screw until spot sizes of stray light in the video camera feed were minimized).
 
 Case 8: Inserted new single-mode fiber (P1-630A-FC-5). Still no clean up.
 
+After some disassembly of the WITec microscope, I discovered that I could
+insert the laser line filter after the collimating lens in the back of the
+microscope. I had a rudimentary holder 3D printed to keep the laser line filter
+upright and situated in the beam path between the fiber collimating lens and
+the 50:50 beam splitter. The details are outlined [in another
+document](../optics/assembly_2024-02-22.md).
+
+Placing the laser line filter immediately after the fiber collimating lens
+cleaned up the spectra entirely. This leads me to conclude that the source of
+the spectral pollution is coming from the single-mode fiber.
