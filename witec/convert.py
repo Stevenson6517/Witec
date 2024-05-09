@@ -147,7 +147,6 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
             recursively_save_dict_contents_to_group(
                 h5, "Measurement_000/Metadata/", metadata
             )
-        print(f"Contents written to {output}")
 
 
 if __name__ == "__main__":
@@ -205,3 +204,4 @@ if __name__ == "__main__":
     to_hdf5(
         project=args.witec, winspec=args.winspec, output=args.output, metadata=metadata
     )
+    print(f"Contents written to {args.output}")
