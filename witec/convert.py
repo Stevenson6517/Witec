@@ -129,8 +129,8 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
             h5_meas_group,  # parent HDF5 group
             main_data=np.sum(spe_object.data, axis=2),
             main_data_name="Raw_Data",  # Name of main dataset
-            quantity="Wavelength",  # Physical quantity contained in Main dataset
-            units="nm",  # Units for the physical quantity
+            quantity="Intensity",  # Physical quantity contained in Main dataset
+            units="a.u.",  # Units for the physical quantity
             dtype=_datatype_map[spe_object.header["datatype"]],
             pos_dims=pos_dims,  # Position dimensions
             spec_dims=spec_dims,  # Spectroscopic dimensions
