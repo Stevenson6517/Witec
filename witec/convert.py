@@ -128,8 +128,9 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
 
     with h5py.File(output, "w") as h5:
         h5_meas_group = sidpy.prov_utils.create_indexed_group(h5, "Measurement")
+        h5_channel_group = sidpy.prov_utils.create_indexed_group(h5_meas_group, "Channel")
         h5_raw = usid.hdf_utils.write_main_dataset(
-            h5_meas_group,  # parent HDF5 group
+            h5_channel_group,  # parent HDF5 group
             main_data=np.sum(spe_object.data, axis=2),
             main_data_name="Raw_Data",  # Name of main dataset
             quantity="Intensity",  # Physical quantity contained in Main dataset
@@ -141,7 +142,7 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
         )
         # Metadata
         recursively_save_dict_contents_to_group(
-            h5, "Measurement_000/Winspec/", spe_metadata
+            h5, "Measurement_000/Channel_000/Winspec/", spe_metadata
         )
         recursively_save_dict_contents_to_group(
             h5, "Measurement_000/", wip_object.contents
