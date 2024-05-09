@@ -95,18 +95,21 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
 
     points_per_line = int(default_tag["Points per Line"])
     scan_width = float(default_tag["Scan Width [µm]"])
-    start_x = float(default_tag["Scan Origin X [µm]"])
-    stop_x = start_x + scan_width
+    origin_x = float(default_tag["Scan Origin X [µm]"])
+    start_x = origin_x - scan_width/2
+    stop_x = origin_x + scan_width/2
 
     lines_per_image = int(default_tag["Lines per Image"])
     scan_height = float(default_tag["Scan Height [µm]"])
-    start_y = float(default_tag["Scan Origin Y [µm]"])
-    stop_y = start_y + scan_height
+    origin_y = float(default_tag["Scan Origin Y [µm]"])
+    start_y = origin_y - scan_height/2
+    stop_y = origin_y + scan_height/2
 
     number_of_images = int(default_tag["Number of Images"])
     scan_depth = float(default_tag["Scan Depth [µm]"])
-    start_z = float(default_tag["Scan Origin Z [µm]"])
-    stop_z = start_z + scan_depth
+    origin_z = float(default_tag["Scan Origin Z [µm]"])
+    start_z = origin_z - scan_depth/2
+    stop_z = origin_z + scan_depth/2
 
     z_rotation = default_tag["Z-Rotation [°]"]
 
