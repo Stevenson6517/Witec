@@ -2,6 +2,7 @@
 **/.ipynb_checkpoints/
 **/__pycache__/
 .DS_Store
+.virtual_documents
 issues/
 data/
 tmp/
