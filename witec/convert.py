@@ -118,8 +118,8 @@ def to_hdf5(project=None, winspec=None, output=None, *, metadata=None):
     spec_vals = spe_object.axis
 
     pos_dims = [
-        usid.Dimension("x", "um", pos_x_vals),
-        usid.Dimension("y", "um", pos_y_vals),
+        usid.Dimension("x", "µm", pos_x_vals),
+        usid.Dimension("y", "µm", pos_y_vals),
     ]
     spec_dims = [usid.Dimension("Wavelength", "nm", spec_vals)]
     # Map between header datatype field and numpy datatype
