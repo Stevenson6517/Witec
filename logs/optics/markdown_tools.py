@@ -41,8 +41,16 @@ def _clean_dataframe(dataframe):
         if clean_df[col].str.contains("±").any():
             err_col = "± " + col
             clean_df[[col, err_col]] = clean_df[col].str.split(pat=r"±", expand=True)
-    # Attempt to convert any column with numbers to numeric dtype
-    clean_df = clean_df.apply(pd.to_numeric, errors="ignore")
+    for col in clean_df:
+        # Attempt to convert any column with numbers to numeric dtype
+        try:
+            clean_df[col] = pd.to_numeric(clean_df[col])
+        except ValueError:
+            continue
+    try:
+        clean_df.index = pd.to_numeric(clean_df.index)
+    except ValueError:
+        pass
     return clean_df
 
 
