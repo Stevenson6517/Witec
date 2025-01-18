@@ -4,7 +4,6 @@ channels:
   - defaults
 dependencies:
   - python>=3.10
-  - scifireaders
   - h5py
   - ipympl
   # - jupyterlab
@@ -26,3 +25,4 @@ dependencies:
   - pip:
     # - sidpy
     - git+https://github.com/davidcurie/pyAvantes.git
+    - SciFiReaders
