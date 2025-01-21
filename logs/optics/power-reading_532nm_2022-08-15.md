@@ -101,7 +101,7 @@ from markdown_tools import extract_data
 # Gather variables from filename
 filename = "power-reading_532nm_2022-08-15.md"
 source = pathlib.Path(filename)
-target = source.name
+target = pathlib.Path("media") / source.name
 
 verdi_power = extract_data(source, index=1)
 # set boolean masks
@@ -165,10 +165,10 @@ with plt.style.context(["default", "science", "notebook"]):
     )
     ax.set_ylabel("Measured Power (µW)")
 
-    figname = target.with_suffix(".png")
+    figname = target.with_suffix(".svg")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()
 ```
 
-![power plots of laser at various filters and objectives](power-reading_532nm_2022-08-15.png "Laser plots")
+![power plots of laser at various filters and objectives](media/power-reading_532nm_2022-08-15.svg "Laser plots")

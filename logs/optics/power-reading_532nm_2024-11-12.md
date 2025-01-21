@@ -51,7 +51,7 @@ import scienceplots
 data_path = "../../data/laser/Verdi-V5_plog_0010mW_f-0_23.52A_power_2024-11-12.csv"
 filename = "power-reading_532nm_2024-11-12.md"
 source = pathlib.Path(filename)
-target = source.name
+target = pathlib.Path("media") / source.name
 
 start = datetime.time(8, 15, 50)
 stop_low = datetime.time(8, 18, 56)
@@ -93,13 +93,13 @@ with plt.style.context(["default", "science", "notebook"]):
 
     fig.autofmt_xdate()
     fig.subplots_adjust(wspace=0, hspace=0)
-    figname = target.with_suffix(".png")
+    figname = target.with_suffix(".svg")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()
 ```
 
-![Power stability from startup](power-reading_532nm_2024-11-12.png "Power stability")
+![Power stability from startup](media/power-reading_532nm_2024-11-12.svg "Power stability")
 
 > At 8:18, we realized the additional 50:50 beam splitter prism that directs
 white light onto the sample was still in place. It was removed from the path
