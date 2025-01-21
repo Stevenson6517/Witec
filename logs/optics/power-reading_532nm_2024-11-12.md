@@ -38,7 +38,7 @@ Diode current
 
 ```python
 import datetime
-import os
+import pathlib
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,8 +50,8 @@ import scienceplots
 # Gather variables from filename
 data_path = "../../data/laser/Verdi-V5_plog_0010mW_f-0_23.52A_power_2024-11-12.csv"
 filename = "power-reading_532nm_2024-11-12.md"
-slug = os.path.splitext((filename))[0]
-basename = os.path.basename(slug)
+source = pathlib.Path(filename)
+target = source.name
 
 start = datetime.time(8, 15, 50)
 stop_low = datetime.time(8, 18, 56)
@@ -68,7 +68,7 @@ laser_variance = laser_std ** 2
 
 with plt.style.context(["default", "science", "notebook"]):
     fig, [ax1, ax2] = plt.subplots(1, 2, width_ratios=(1,15), figsize=(10,7))
-    fig.suptitle(basename)
+    fig.suptitle(source.stem)
     verdi_power.plot(ax=ax1, x="Time (hh:mm:ss)", y="Power (W)", xlim=(start, stop_low), ylim=(0, 7e-4))
     ax1.set_ylabel("Measured Power (W)")
     ax1.set_xlabel("")
@@ -93,7 +93,7 @@ with plt.style.context(["default", "science", "notebook"]):
 
     fig.autofmt_xdate()
     fig.subplots_adjust(wspace=0, hspace=0)
-    figname = f"{slug}.png"
+    figname = target.with_suffix(".png")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()

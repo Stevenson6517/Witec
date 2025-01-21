@@ -77,7 +77,7 @@ hysteresis in the laser diode, so I will return back tomorrow to see if
 a fresh start from standby will eliminate this bias.
 
 ```python
-import os
+import pathlib
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
@@ -88,10 +88,10 @@ from markdown_tools import extract_data
 
 # Gather variables from filename
 filename = "power-reading_532nm_2024-12-05.md"
-slug = os.path.splitext((filename))[0]
-basename = os.path.basename(slug)
+source = pathlib.Path(filename)
+target = source.name
 
-verdi_power = extract_data(filename, index=0)
+verdi_power = extract_data(source, index=0)
 # set boolean masks
 ND01A = verdi_power["ND Filter"].isin(["ND01A"])
 No_filter = verdi_power["ND Filter"].isin(["None"])
@@ -106,7 +106,7 @@ ND01A_100 = verdi_power.loc[ND01A & obj_100]
 # Plot each subset
 with plt.style.context(["default", "science"]):
     fig, [ax1, ax2] = plt.subplots(1, 2, width_ratios=[1,7], figsize=(7, 4))
-    fig.suptitle(basename)
+    fig.suptitle(source.stem)
     
     ax1.set_title("Unfiltered\npower")
     ax1.yaxis.set_major_locator(MultipleLocator(500))
@@ -156,7 +156,7 @@ with plt.style.context(["default", "science"]):
         ax.set_ylabel("Measured Power (µW)")
     
     fig.subplots_adjust(wspace=0, hspace=0)
-    figname = f"{slug}.png"
+    figname = target.with_suffix(".png")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()

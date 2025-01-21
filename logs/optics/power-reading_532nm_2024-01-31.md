@@ -121,7 +121,7 @@ before the objective coupling to the input of the fiber.
 | 0.01          | ND20A     | 50x                  | 0.03           | 0.04           |
 
 ```python
-import os
+import pathlib
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator
@@ -132,10 +132,10 @@ from markdown_tools import extract_data
 
 # Gather variables from filename
 filename = "power-reading_532nm_2024-01-31.md"
-slug = os.path.splitext((filename))[0]
-basename = os.path.basename(slug)
+source = pathlib.Path(filename)
+target = source.name
 
-verdi_power = extract_data(filename, index=1)
+verdi_power = extract_data(source, index=1)
 # set boolean masks
 ND01A = verdi_power["ND Filter"].isin(["ND01A"])
 ND10A = verdi_power["ND Filter"].isin(["ND10A"])
@@ -151,7 +151,7 @@ ND10A_100 = verdi_power.loc[ND10A & obj_100]
 # Plot each subset
 with plt.style.context(["default", "science", "notebook"]):
     fig, ax = plt.subplots(figsize=(6, 8))
-    fig.suptitle(basename)
+    fig.suptitle(source.stem)
     # Reserve the first two fill colors
     # for unfiltered measurements
     ax._get_patches_for_fill.get_next_color()
@@ -187,7 +187,7 @@ with plt.style.context(["default", "science", "notebook"]):
     ax.set_xlabel("Set Power (W)")
     
     plt.tight_layout()
-    figname = f"{slug}.png"
+    figname = target.with_suffix(".png")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()

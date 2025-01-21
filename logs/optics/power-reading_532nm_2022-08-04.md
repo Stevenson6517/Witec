@@ -78,7 +78,7 @@ measurement:
 | 0.60          | None      | 100x                 | 16.7 ± 0.4          |
 
 ```python
-import os
+import pathlib
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -88,10 +88,10 @@ from markdown_tools import extract_data
 
 # Gather variables from filename
 filename = "power-reading_532nm_2022-08-04.md"
-slug = os.path.splitext((filename))[0]
-basename = os.path.basename(slug)
+source = pathlib.Path(filename)
+target = source.name
 
-verdi_power = extract_data(filename)
+verdi_power = extract_data(source)
 # set boolean masks
 obj_50 = verdi_power["Microscope Objective"].isin(["50x"])
 obj_100 = verdi_power["Microscope Objective"].isin(["100x"])
@@ -101,7 +101,7 @@ verdi_100 = verdi_power.loc[obj_100]
 # Plot each subset
 with plt.style.context(["default", "science", "notebook"]):
     fig, ax = plt.subplots()
-    fig.suptitle(basename)
+    fig.suptitle(source.stem)
     verdi_50.plot(
         ax=ax,
         y="Measured Power (µW)",
@@ -116,7 +116,7 @@ with plt.style.context(["default", "science", "notebook"]):
     )
     ax.set_ylabel("Measured Power (µW)")
 
-    figname = f"{slug}.png"
+    figname = target.with_suffix(".png")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()

@@ -90,7 +90,7 @@ before the objective coupling to the input of the fiber.
 | 1.00          | ND20A     | 100x                 | 80   ± 4            |
 
 ```python
-import os
+import pathlib
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -100,10 +100,10 @@ from markdown_tools import extract_data
 
 # Gather variables from filename
 filename = "power-reading_532nm_2022-08-15.md"
-slug = os.path.splitext((filename))[0]
-basename = os.path.basename(slug)
+source = pathlib.Path(filename)
+target = source.name
 
-verdi_power = extract_data(filename, index=1)
+verdi_power = extract_data(source, index=1)
 # set boolean masks
 ND10A = verdi_power["ND Filter"].isin(["ND10A"])
 ND20A = verdi_power["ND Filter"].isin(["ND20A"])
@@ -117,7 +117,7 @@ ND20A_100 = verdi_power.loc[ND20A & obj_100]
 # Plot each subset
 with plt.style.context(["default", "science", "notebook"]):
     fig, [ax1, ax2] = plt.subplots(2, 1, figsize=(6, 8))
-    fig.suptitle(basename)
+    fig.suptitle(source.stem)
     ND10A_50.plot(
         ax=ax1,
         y="Measured Power (µW)",
@@ -165,7 +165,7 @@ with plt.style.context(["default", "science", "notebook"]):
     )
     ax.set_ylabel("Measured Power (µW)")
 
-    figname = f"{slug}.png"
+    figname = target.with_suffix(".png")
     fig.savefig(figname)
     print(f"Figure saved to {figname}")
 plt.show()
