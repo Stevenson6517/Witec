@@ -163,7 +163,7 @@ with plt.style.context(["default", "science", "notebook"]):
         yerr="± Measured Power (µW)",
         label="ND20A @ 100x",
     )
-    ax.set_ylabel("Measured Power (µW)")
+    ax1.set_ylabel("Measured Power (µW)")
 
     figname = target.with_suffix(".svg")
     fig.savefig(figname)
